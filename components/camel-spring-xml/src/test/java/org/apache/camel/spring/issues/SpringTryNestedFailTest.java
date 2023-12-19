@@ -18,16 +18,27 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringTryNestedFailTest extends ContextTestSupport {
+public class SpringTryNestedFailTest extends SpringTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringTryNestedFailTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringTryNestedFailTest.xml");
     }
+
+//    @Override
+//    protected CamelContext createCamelContext() throws Exception {
+//        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringTryNestedFailTest.xml");
+//    }
 
     @Test
     public void testOk() throws Exception {

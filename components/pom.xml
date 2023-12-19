@@ -504,6 +504,8 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipITs>${skipITs.ppc64le}</skipITs>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -522,7 +524,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <reuseForks>true</reuseForks>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
                             <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <systemPropertyVariables>

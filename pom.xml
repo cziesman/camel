@@ -726,6 +726,8 @@
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <failIfNoTests>false</failIfNoTests>
                             <skipITs>true</skipITs>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
                         </configuration>
                     </plugin>
                     <plugin>
