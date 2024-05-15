@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce-parent</artifactId>
-        <version>4.6.0-SNAPSHOT</version>
+        <version>4.7.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.maven</groupId>
@@ -162,7 +162,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>xyz.rogfam</groupId>
+            <groupId>io.github.littleproxy</groupId>
             <artifactId>littleproxy</artifactId>
             <version>${littleproxy-version}</version>
             <scope>test</scope>

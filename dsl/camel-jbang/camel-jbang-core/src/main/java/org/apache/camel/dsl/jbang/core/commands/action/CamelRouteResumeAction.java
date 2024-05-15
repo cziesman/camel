@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spring.security;
+package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.util.List;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.json.JsonObject;
+import picocli.CommandLine;
 
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.util.Assert;
+@CommandLine.Command(name = "resume-route",
+                     description = "Resume Camel routes", sortOptions = false)
+public class CamelRouteResumeAction extends CamelRouteAction {
 
-public class SpringSecurityAccessPolicy {
-
-    private final List<ConfigAttribute> configAttributes;
-
-    public SpringSecurityAccessPolicy(String access) {
-        Assert.isTrue(access != null, "The access attribute must not be null.");
-        configAttributes = SecurityConfig.createListFromCommaDelimitedString(access);
+    public CamelRouteResumeAction(CamelJBangMain main) {
+        super(main);
     }
 
-    public List<ConfigAttribute> getConfigAttributes() {
-        return configAttributes;
+    @Override
+    protected void onAction(JsonObject root) {
+        root.put("command", "resume");
     }
 
 }

@@ -26,7 +26,7 @@ public class PineconeVectorDb {
 
     public static class Headers {
         @Metadata(description = "The action to be performed.", javaType = "String",
-                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE")
+                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
         public static final String ACTION = "CamelPineconeAction";
 
         @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
@@ -47,16 +47,16 @@ public class PineconeVectorDb {
         @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
         public static final String COLLECTION_NAME = "CamelPineconeCollectionName";
 
-        @Metadata(description = "Collection Similarity Metric", javaType = "String")
+        @Metadata(description = "Collection Similarity Metric", javaType = "String", enums = "cosine,euclidean,dotproduct")
         public static final String COLLECTION_SIMILARITY_METRIC = "CamelPineconeCollectionSimilarityMetric";
 
         @Metadata(description = "Collection Dimension", javaType = "int")
         public static final String COLLECTION_DIMENSION = "CamelPineconeCollectionDimension";
 
-        @Metadata(description = "Collection Cloud Vendor", javaType = "String")
+        @Metadata(description = "Collection Cloud Vendor", javaType = "String", enums = "aws,gcp,azure")
         public static final String COLLECTION_CLOUD = "CamelPineconeCollectionCloud";
 
-        @Metadata(description = "Collection Cloud Vendor Region", javaType = "String")
+        @Metadata(description = "Collection Cloud Vendor Region", javaType = "String", enums = "aws,gcp,azure")
         public static final String COLLECTION_CLOUD_REGION = "CamelPineconeCollectionCloudRegion";
 
         @Metadata(description = "Index Upsert Id", javaType = "String")

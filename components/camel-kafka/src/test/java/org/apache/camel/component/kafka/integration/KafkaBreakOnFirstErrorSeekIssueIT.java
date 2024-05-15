@@ -37,7 +37,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
+             architectures = { "amd64", "aarch64" },
+             disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
@@ -109,7 +111,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
 
         // let test run for awhile
         Awaitility.await()
-                .timeout(10, TimeUnit.SECONDS)
+                .timeout(30, TimeUnit.SECONDS)
                 .pollDelay(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(true));
 

@@ -1,0 +1,115 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.6 to 4.7
+
+=== camel-core
+
+Add default values to `ThrottlingExceptionRoutePolicy` route policy.
+
+The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
+instead of being a parameterized type.  This may cause some compilation failures if the code is declaring a variable for the registry.
+
+=== DSL
+
+The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
+
+|===
+|*Old Name* |*New Name*
+
+| failOver | failOverLoadBalancer
+| random | randomLoadBalancer
+| roundRobin | roundRobinLoadBalancer
+| sticky | stickyLoadBalancer
+| topic | topicLoadBalancer
+| weighted | weightedLoadBalancer
+|===
+
+For example in XML you need to change from:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+      <failover>
+          <exception>java.io.IOException</exception>
+      </failover>
+      <to uri="direct:x"/>
+      <to uri="direct:y"/>
+      <to uri="direct:z"/>
+  </loadBalance>
+</route>
+----
+
+To:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+      <failoverLoadBalancer>
+          <exception>java.io.IOException</exception>
+      </failoverLoadBalancer>
+      <to uri="direct:x"/>
+      <to uri="direct:y"/>
+      <to uri="direct:z"/>
+  </loadBalance>
+</route>
+----
+
+=== camel-debug
+
+The debugger (using `org.apache.camel.spi.BacklogDebugger`) used for tooling such as IDEA and Visual Studio, is fixed
+to work better out-of-the-box by just having `camel-debug` JAR or `camel-debug-starter` (for Spring Boot) on the classpath.
+
+An internal change is that the MBean operation `messageHistoryOnBreakpointAsXml` on `ManagedBacklogDebugger` now includes
+the current node as last message history, which was expected by IDEA tooling, to make it function again.
+
+=== camel-spring-security
+
+The `camel-spring-security` component has been updated to improve readiness for Spring Security 7.x. Since Spring Security 5.8 the `AccessDecisionManager` interface and the related cooperating classes have been deprecated in favor of `AuthorizationManager` based patterns.
+If you are creating Spring Security route policies in your code, you must now refactor them to be based on an `AuthorizationManager`.
+
+For example, you might have a route policy defined as follows:
+
+[source,java]
+----
+SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
+authorizationPolicy.setAuthenticationManager(authenticationManager);
+authorizationPolicy.setSpringSecurityAccessPolicy(new SpringSecurityAccessPolicy("ROLE_ADMIN"));
+authorizationPolicy.setAccessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())));
+----
+
+With the changes implemented in this release, that must be refactored to:
+
+[source,java]
+----
+SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
+authorizationPolicy.setAuthenticationManager(authenticationManager);
+authorizationPolicy.setAuthorizationManager(AuthorityAuthorizationManager.hasRole("ADMIN"));
+----
+
+This new pattern supports a more expressive language to define your own authorization rules, exposing the full power of the Spring Security framework to Camel route policies.
+See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler[spring documentation] for further details on how to migrate your custom code from `AccessDecisionManager` to `AuthorizationManager`.
+
+=== camel-as2
+
+The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in
+sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
+
+
+=== Camel Spring Boot
+
+==== camel-debug-starter
+
+Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
+via `camel.debug.` options in `application.properties`.
+
+The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
+by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
+

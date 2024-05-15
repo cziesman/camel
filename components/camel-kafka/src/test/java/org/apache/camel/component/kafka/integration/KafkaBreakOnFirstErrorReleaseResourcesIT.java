@@ -32,7 +32,8 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
+             architectures = { "amd64", "aarch64" },
+             disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";
@@ -120,8 +122,9 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
         int count = 0;
 
-        for (Thread t : threads) {
-            if (t.getName().contains("heartbeat")) {
+        for (Thread t : threads) { //CAMEL-20722: Look for more specific heartbeat thread, log the full thread name.
+            if (t.getName().contains("heartbeat") && t.getName().contains("breakOnFirstError-20563")) {
+                LOG.info(" Thread name: {}", t.getName());
                 count++;
             }
         }

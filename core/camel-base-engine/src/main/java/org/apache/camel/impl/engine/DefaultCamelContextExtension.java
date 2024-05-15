@@ -133,7 +133,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     private volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
 
-    @Deprecated
+    @Deprecated(since = "3.17.0")
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
 
@@ -229,9 +229,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
-        if (camelContext.getEndpointRegistry().isEmpty()) {
-            return null;
-        }
         return camelContext.getEndpointRegistry().get(uri);
     }
 
